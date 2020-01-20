@@ -14,27 +14,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapter.ViewHoler> {
+
     private Context context;
     private ArrayList<FavoriteModel> favoriteList;
-    private boolean isVisible; // 刪除的 button 是否顯示（預設是 false）
-    private ImageButton btn_delete;
+    private boolean isVisible;
 
-    public FavoriteListAdapter(Context context,ArrayList<FavoriteModel> favoriteList) {
+    //建構子加入布林值
+    public FavoriteListAdapter(Context context,ArrayList<FavoriteModel> favoriteList, boolean isVisible) {
         this.context = context;
         this.favoriteList = favoriteList;
+        this.isVisible = isVisible;
     }
 
     @NonNull
     @Override
     public FavoriteListAdapter.ViewHoler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorite_list,null);
-        ViewHoler viewHoler = new ViewHoler(view);
-        return viewHoler;
+        View view = LayoutInflater.from(context).inflate(R.layout.item_favorite_list,null);
+        return new FavoriteListAdapter.ViewHoler(view);
     }
 
     public class ViewHoler extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Button video_name;
-        private ImageButton video_image;
+        private ImageButton video_image, btn_delete;//補上宣告
 
         public ViewHoler(@NonNull View itemView) {
             super(itemView);
@@ -61,6 +62,14 @@ public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapte
     public void onBindViewHolder(@NonNull FavoriteListAdapter.ViewHoler holder, int position) {
         holder.video_image.setImageResource(favoriteList.get(position).getVideo_img());
         holder.video_name.setText(favoriteList.get(position).getVideo_name());
+
+
+        //用Getter判斷 ; onBind 裡面的 ViewHoler 才能抓到所有item
+        if (isVisible()){
+            holder.btn_delete.setVisibility(View.VISIBLE);
+        }else {
+            holder.btn_delete.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -68,15 +77,12 @@ public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapte
         return favoriteList.size();
     }
 
-    // 改變刪除按鈕的可視狀態
-    public void changeDeleteButtonStatus(boolean isVisible) {
-        this.isVisible = isVisible;
-        //notifyDataSetChanged();
+    // Generate Getter and Setter
+    public boolean isVisible() {
+        return isVisible;
+    }
 
-        if(isVisible) {
-            btn_delete.setVisibility(View.VISIBLE);
-        }else {
-            btn_delete.setVisibility(View.GONE);
-        }
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 }

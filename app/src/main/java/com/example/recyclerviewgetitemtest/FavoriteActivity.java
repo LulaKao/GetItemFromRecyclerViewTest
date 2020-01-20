@@ -1,6 +1,7 @@
 package com.example.recyclerviewgetitemtest;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -10,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class FavoriteActivity extends AppCompatActivity implements View.OnClickListener {
-    private ImageButton btn_delete;
+
     private RecyclerView favorite_list;
     private ArrayList<FavoriteModel> favorite_data = new ArrayList<>();
     private FavoriteListAdapter adapter;
@@ -33,7 +34,7 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
         favorite_data.add(new FavoriteModel(R.drawable.hades,"鋼鐵墳墓2"));
 
         // 配對 Adatpter
-        adapter = new FavoriteListAdapter(FavoriteActivity.this,favorite_data);
+        adapter = new FavoriteListAdapter(FavoriteActivity.this,favorite_data,false);//補上新建構子
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         favorite_list.setLayoutManager(layoutManager);
@@ -50,7 +51,10 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
             // 點了編輯的 button 要改變刪除按鈕（在 RecyclerView 裡）的可視狀態
             case R.id.favoritepageEdit:
                 isEdit = ! isEdit; // 點下去後 isEdit 的狀態改變（!：NOT運算，真變假，假變真）
-                adapter.changeDeleteButtonStatus(isEdit);
+                Log.d("D200=",""+isEdit);
+
+                adapter.setVisible(isEdit);//用Setter取值
+                adapter.notifyDataSetChanged();
                 break;
         }
 
@@ -63,8 +67,6 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
         btn_edit = findViewById(R.id.favoritepageEdit);
         // RecyclerView
         favorite_list = findViewById(R.id.favoriteList);
-        // 刪除
-        btn_delete = findViewById(R.id.favoritepageDelete);
     }
     //========= 初始化元件 END =========//
 }
